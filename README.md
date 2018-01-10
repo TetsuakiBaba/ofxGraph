@@ -11,16 +11,40 @@ ofxGraph is a simple addon library for openframeworks.
 5. CSV file export
 
 ## Usage
-See Example
+```c++
+void ofApp::setup(){
+    ofSetVerticalSync(true); // sync with vertical refresh rate
+
+    // ofxGraph uses ofxGui as a internal UI, therefore, you can choose gui font like below
+    ofxGuiSetFont(ofToDataPath("ofxGraph/DIN Alternate Bold.ttf"), 10);
+
+    // ofxGraph Init
+    graph.setup(100, 100, 600, 300); // x, y, w, h
+    graph.setName("sample");
+    graph.setDx(1.0); // which means delta of time
+    graph.color.set(255,255,255); // white
+
+}
+void ofApp::update(){
+    graph.add(ofRandom(-100,100));
+}
+
+//--------------------------------------------------------------
+void ofApp::draw(){
+    ofBackground(50,50,50);
+    graph.draw();
+}
+```
+See Example for more detailed.
 
 ![Example screenshot](/snapshot.png)
-https://www.youtube.com/watch?v=bwaJbC1F6sI&feature=youtu.be
+<https://www.youtube.com/watch?v=bwaJbC1F6sI&feature=youtu.be>
 
 ## Install
-It needs ofxGui, ofxXmlSettings
+ofxGui and ofxXmlSettings are required.
 
 ## Licence
-[MIT](https://github.com/tcnksm/tool/blob/master/LICENCE)
+[MIT](https://opensource.org/licenses/MIT)
 
 ## Author
 [TetsuakiBaba](https://github.com/TetsuakiBaba)
