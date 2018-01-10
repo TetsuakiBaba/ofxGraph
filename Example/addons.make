@@ -1,0 +1,3 @@
+ofxGraph
+ofxGui
+ofxXmlSettings
