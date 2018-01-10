@@ -35,6 +35,8 @@ See Example for more detailed.
 ![Example screenshot](/snapshot.png)
 <https://www.youtube.com/watch?v=bwaJbC1F6sI&feature=youtu.be>
 
+![Example of FFT and Spectrum](/ofxGraph_FFT_Example.png)
+<https://www.youtube.com/watch?v=4i5nDxlcuS0&feature=youtu.be>
 ## Install
 ofxGui and ofxXmlSettings are required.
 
