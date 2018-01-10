@@ -13,10 +13,6 @@ ofxGraph is a simple addon library for openframeworks.
 ## Usage
 ```c++
 void ofApp::setup(){
-    ofSetVerticalSync(true); // sync with vertical refresh rate
-
-    // ofxGraph uses ofxGui as a internal UI, therefore, you can choose gui font like below
-    ofxGuiSetFont(ofToDataPath("ofxGraph/DIN Alternate Bold.ttf"), 10);
 
     // ofxGraph Init
     graph.setup(100, 100, 600, 300); // x, y, w, h
@@ -29,7 +25,6 @@ void ofApp::update(){
     graph.add(ofRandom(-100,100));
 }
 
-//--------------------------------------------------------------
 void ofApp::draw(){
     ofBackground(50,50,50);
     graph.draw();
