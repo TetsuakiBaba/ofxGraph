@@ -13,6 +13,9 @@ ofxGraph is a simple addon library for openframeworks.
 ## Usage
 See Example
 
+![Example screenshot](/snapshot.png)
+https://www.youtube.com/watch?v=bwaJbC1F6sI&feature=youtu.be
+
 ## Install
 It needs ofxGui, ofxXmlSettings
 
