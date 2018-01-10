@@ -22,12 +22,12 @@ void ofxGraph::saveSettings()
 void ofxGraph::setup(int _x, int _y, int _w, int _h)
 {
     r.set(_x, _y, _w, _h);
-    dx = 1.0;
-    max_length_of_data = 128;
-    color.set(255,255,255);
-    max_data = 10;
-    min_data = 0;
-    name = "noname";
+    dx = 1.0;                 // default
+    max_length_of_data = 128; // default
+    color.set(255,255,255);   // default
+    max_data = 10;            // default
+    min_data = 0;             // default
+    name = "noname";          // default
     
     font_title.load(ofToDataPath("ofxGraph/DIN Alternate Bold.ttf"), 18);
     font_parameter.load(ofToDataPath("ofxGraph/DIN Alternate Bold.ttf"), 10);
@@ -44,14 +44,52 @@ void ofxGraph::setup(int _x, int _y, int _w, int _h)
     panel.setDefaultHeight(panel_size.y);
     panel.setDefaultWidth(panel_size.x);
     panel.setName("Options");
-    panel.add(slider_bufsize.setup("BufSize", 128, 32, 512));
     
+    panel.add(slider_bufsize.setup("BufSize", 128, 32, 512));
     panel.add(button_save_csv.setup("Save CSV"));
     panel.add(toggle_pause.setup("Pause", false));
     panel.add(toggle_no_draw.setup("No draw", false));
     panel.add(button_clear.setup("Clear"));
 }
 
+void ofxGraph::setColor(ofColor _color)
+{
+    color = _color;
+    c_text = color;
+    c_background = color.getInverted();
+    c_background.set(c_background.r, c_background.g, c_background.b, 160);
+    
+    c_fill = color.getLerped(color.getInverted(), 0.5);
+    c_fill.set(c_fill.r, c_fill.g, c_fill.b, 160);
+
+    slider_bufsize.setTextColor(c_text);
+    slider_bufsize.setBackgroundColor(c_background);
+    slider_bufsize.setFillColor(c_fill);
+    
+    button_save_csv.setTextColor(c_text);
+    button_save_csv.setBackgroundColor(c_background);
+    button_save_csv.setFillColor(c_fill);
+
+    button_clear.setTextColor(c_text);
+    button_clear.setBackgroundColor(c_background);
+    button_clear.setFillColor(c_fill);
+    
+    toggle_pause.setTextColor(c_text);
+    toggle_pause.setBackgroundColor(c_background);
+    toggle_pause.setFillColor(c_fill);
+    
+    toggle_no_draw.setTextColor(c_text);
+    toggle_no_draw.setBackgroundColor(c_background);
+    toggle_no_draw.setFillColor(c_fill);
+
+
+
+    
+    panel.setTextColor(c_text);
+    panel.setFillColor(c_fill);
+    panel.setBackgroundColor(c_background);
+    panel.setHeaderBackgroundColor(c_background);
+}
 void ofxGraph::saveCSV()
 {
     ofFile csvfile;
@@ -232,7 +270,7 @@ void ofxGraph::draw()
             ofDrawLine(ofGetMouseX(), ofGetMouseY(),
                        r.x+pos_x,-0.8*(r.height/2)*(data[pos]/rate) + r.y + r.height/2);
             ofFill();
-            ofSetColor(color.getInverted());
+            ofSetColor(c_fill);
             ofDrawRectangle(font_parameter.getStringBoundingBox(ofToString(dx*(data.size()-pos-1))+","+ofToString(data[pos]), ofGetMouseX(), ofGetMouseY()));
             ofDrawRectangle(font_parameter.getStringBoundingBox("data size: "+ofToString(data.size()),r.x, r.y+r.height));
             ofSetColor(color);
@@ -370,7 +408,7 @@ void ofxGraph2D::draw()
         basicOperation(panel);
         
         string str = "data size: "+ofToString(data.size());
-        ofSetColor(color.getInverted());
+        ofSetColor(c_fill);
         ofDrawRectangle(font_parameter.getStringBoundingBox(str, r.x, r.y+r.height));
         
         ofSetColor(color);

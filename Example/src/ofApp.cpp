@@ -9,10 +9,10 @@ void ofApp::setup(){
     
     // ofxGraph Init
     graph.setup(100, 100, 600, 300);
-    graph.setName("sample");
+    graph.setName("sample");     // it automatically loads setting file, (sample.xml)
     graph.setDx(1.0); // which means delta of time
-    graph.color.set(255,255,255);
-    // automatic loading of setting file, (sample.xml)
+    graph.setColor(ofColor::white);  // ofColor(255,255,255)
+
 }
 
 //--------------------------------------------------------------

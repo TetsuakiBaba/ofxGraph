@@ -15,6 +15,7 @@ public:
     void draw();
     void setName(string _name);
     void setPosition(float _x, float _y);
+    void setColor(ofColor _color);
     void setSize(float _w, float _h);
     void clear();
     void saveSettings();
@@ -22,6 +23,9 @@ public:
     void basicOperation(ofxPanel _panel);
     int max_length_of_data;
     ofColor color;
+    ofColor c_text;
+    ofColor c_background;
+    ofColor c_fill;
     ofRectangle r;
     ofImage img_move;
     ofImage img_expand;
