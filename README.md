@@ -9,6 +9,7 @@ ofxGraph is a simple addon library for openframeworks.
 3. shows detailed plot data information
 4. Flexible buffer size
 5. CSV file export
+6. Automatic saving(position and size). except for ofxGui settings.
 
 ## Usage
 ```c++
