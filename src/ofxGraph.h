@@ -33,7 +33,8 @@ public:
     vector<float> data;
 
     float dx;
-
+    float min_height;
+    float min_width;
     float max_data;
     float min_data;
     string name;

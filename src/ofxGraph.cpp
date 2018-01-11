@@ -50,6 +50,9 @@ void ofxGraph::setup(int _x, int _y, int _w, int _h)
     panel.add(toggle_pause.setup("Pause", false));
     panel.add(toggle_no_draw.setup("No draw", false));
     panel.add(button_clear.setup("Clear"));
+    
+    min_height = panel.getHeight()+20;
+    min_width  = panel.getWidth()+100;
 }
 
 void ofxGraph::setColor(ofColor _color)
@@ -156,8 +159,13 @@ void ofxGraph::clear()
 
 void ofxGraph::basicOperation(ofxPanel _panel)
 {
-    ofRectangle r_size;
-    r_size.set(r.x+r.width-_panel.getWidth(),
+    static bool flg_inside_pressed = false;
+    static bool flg_inside_r_data = false;
+    static bool flg_inside_r_expand = false;
+    static bool flg_inside_r_gui = false;
+    
+    ofRectangle r_expand;
+    r_expand.set(r.x+r.width-_panel.getWidth(),
                r.y+_panel.getHeight(),
                _panel.getWidth(),
                r.height-_panel.getHeight());
@@ -170,17 +178,66 @@ void ofxGraph::basicOperation(ofxPanel _panel)
     r_data.set(r.x, r.y,
                r.width-_panel.getWidth(),
                r.height);
-    if( r_data.inside(ofGetMouseX(), ofGetMouseY()) ){
+    
+
+    if( ofGetMousePressed() == true && r_data.inside(ofGetMouseX(), ofGetMouseY()) && !flg_mouse_dragged){
+        flg_inside_pressed = true;
+        flg_inside_r_data = true;
+    }
+    else if( ofGetMousePressed() == false ){
+        flg_inside_pressed = false;
+        flg_inside_r_data = false;
+    }
+    
+    if( ofGetMousePressed() == true && r_expand.inside(ofGetMouseX(), ofGetMouseY()) && !flg_mouse_dragged){
+        flg_inside_pressed = true;
+        flg_inside_r_expand = true;
+    }
+    else if( ofGetMousePressed() == false ){
+        flg_inside_pressed = false;
+        flg_inside_r_expand = false;
+    }
+    
+    // dragg operation
+    if( flg_mouse_dragged && flg_inside_pressed == true){
+        
+        // Expand
+        if( flg_inside_r_expand == true  ){
+            r.width = r.width + ofGetMouseX()-dragged_start_point.x;
+            r.height = r.height + ofGetMouseY()-dragged_start_point.y;
+            if( r.height < min_height ){
+                r.height = min_height;
+            }
+            if( r.width < min_width ){
+                r.width = min_width;
+            }
+            
+        }
+        else if( flg_inside_r_gui == true ){
+            
+        }
+        else if( flg_inside_r_data == true ){
+            setPosition(r.x+ofGetMouseX()-dragged_start_point.x,
+                        r.y+ofGetMouseY()-dragged_start_point.y);
+        }
+        dragged_start_point.set(ofGetMouseX(), ofGetMouseY());
+    }
+
+    
+    
+    
+    if( flg_inside_r_data == true  ){
         ofSetColor(color);
         img_move.draw(ofGetMouseX()-img_move.getWidth(),
                       ofGetMouseY()-img_move.getHeight());
     }
-    if( r_size.inside(ofGetMouseX(), ofGetMouseY()) ){
+    if( flg_inside_r_expand == true ){
         ofSetColor(color);
         img_expand.draw(ofGetMouseX()-img_expand.getWidth(),
                         ofGetMouseY()-img_expand.getHeight());
     }
-    
+
+
     if( ofGetMousePressed() && flg_mouse_dragged == false ){
         flg_mouse_dragged = true;
         dragged_start_point.set(ofGetMouseX(), ofGetMouseY());
@@ -188,25 +245,9 @@ void ofxGraph::basicOperation(ofxPanel _panel)
     else if( !ofGetMousePressed() && flg_mouse_dragged == true ){
         flg_mouse_dragged = false;
     }
-    
-    // dragg operation
-    if( flg_mouse_dragged ){
-        
-        // Expand
-        if( r_size.inside(ofGetMouseX(), ofGetMouseY()) ){
-            r.width = r.width + ofGetMouseX()-dragged_start_point.x;
-            r.height = r.height + ofGetMouseY()-dragged_start_point.y;
-        }
-        else if( r_gui.inside(ofGetMouseX(), ofGetMouseY()) ){
-            
-        }
-        else{
-            setPosition(r.x+ofGetMouseX()-dragged_start_point.x,
-                        r.y+ofGetMouseY()-dragged_start_point.y);
-        }
-        dragged_start_point.set(ofGetMouseX(), ofGetMouseY());
-    }
 
+    
+   
 }
 
 void ofxGraph::draw()
@@ -243,11 +284,14 @@ void ofxGraph::draw()
         
     }
     x = 0.0;
+
+    
+    basicOperation(panel);
     
     // Show detail information
     if( r.inside(ofGetMouseX(), ofGetMouseY()) ){
         
-        basicOperation(panel);
+
         if( data.size() > 0 && toggle_no_draw == false ){
             float d = 1000.0;
             int pos = 0;
@@ -348,6 +392,10 @@ void ofxGraph2D::setup(int _x, int _y, int _w, int _h)
     panel.add(toggle_pause.setup("Pause", false));
     panel.add(toggle_no_draw.setup("No draw", false));
     panel.add(button_clear.setup("Clear"));
+    
+    min_height = panel.getHeight()+20;
+    min_width  = panel.getWidth()+100;
+
 }
 void ofxGraph2D::add(vector<float>_data)
 {
