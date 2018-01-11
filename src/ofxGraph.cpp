@@ -284,6 +284,7 @@ void ofxGraph::draw()
         
     }
     x = 0.0;
+    
 
     
     basicOperation(panel);
