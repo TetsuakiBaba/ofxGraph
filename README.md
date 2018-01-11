@@ -15,7 +15,7 @@ ofxGraph is a simple addon library for openframeworks.
 void ofApp::setup(){
 
 // ofxGraph Init
-  graph.setup(100, 100, 600, 300);
+  graph.setup();
   graph.setName("sample");     // it automatically loads setting file, (sample.xml)
   graph.setDx(1.0); // which means delta of time
   graph.setColor(ofColor::white);  // ofColor(255,255,255)
