@@ -244,6 +244,7 @@ void ofxGraph::basicOperation(ofxPanel _panel)
     }
     else if( !ofGetMousePressed() && flg_mouse_dragged == true ){
         flg_mouse_dragged = false;
+        saveSettings();
     }
 
     
