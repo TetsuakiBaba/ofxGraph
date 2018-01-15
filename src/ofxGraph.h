@@ -31,6 +31,11 @@ public:
     ofImage img_move;
     ofImage img_expand;
     
+    bool flg_inside_pressed = false;
+    bool flg_inside_r_data = false;
+    bool flg_inside_r_expand = false;
+    bool flg_inside_r_gui = false;
+    
     vector<float> data;
 
     float dx;

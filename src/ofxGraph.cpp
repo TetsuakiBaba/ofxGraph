@@ -164,11 +164,7 @@ void ofxGraph::clear()
 
 void ofxGraph::basicOperation(ofxPanel _panel)
 {
-    static bool flg_inside_pressed = false;
-    static bool flg_inside_r_data = false;
-    static bool flg_inside_r_expand = false;
-    static bool flg_inside_r_gui = false;
-    
+        
     ofRectangle r_expand;
     r_expand.set(r.x+r.width-_panel.getWidth(),
                r.y+_panel.getHeight(),
