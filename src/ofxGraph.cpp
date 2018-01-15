@@ -24,7 +24,7 @@ void ofxGraph::setup(int _x, int _y, int _w, int _h)
     r.set(_x, _y, _w, _h);
     dx = 1.0;                 // default
     max_length_of_data = 128; // default
-    color.set(255,255,255);   // default
+    setColor(ofColor::white);   // default
     max_data = 10;            // default
     min_data = 0;             // default
     name = "noname";          // default
@@ -133,6 +133,10 @@ void ofxGraph::setSize(float _w, float _h)
     r.height = _h;
 }
 
+void ofxGraph::setBufSize(int _bufsize)
+{
+    slider_bufsize = _bufsize;
+}
 
 void ofxGraph::setMaxLengthOfData(int &_max_length_of_data)
 {

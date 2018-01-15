@@ -22,6 +22,7 @@ public:
     void saveSettings();
     void saveCSV();
     void basicOperation(ofxPanel _panel);
+    void setBufSize(int _bufsize);
     int max_length_of_data;
     ofColor color;
     ofColor c_text;
