@@ -55,6 +55,11 @@ void ofxGraph::setup(int _x, int _y, int _w, int _h)
     min_width  = panel.getWidth()+100;
 }
 
+void ofxGraph::setup()
+{
+    setup(ofRandom(300)+200, ofRandom(200)+200, 500, 250);
+}
+
 void ofxGraph::setColor(ofColor _color)
 {
     color = _color;

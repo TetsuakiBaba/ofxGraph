@@ -9,6 +9,7 @@ public:
     ofxGraph();
     ~ofxGraph();
     void setup(int _x, int _y, int _w, int _h);
+    void setup();
     void setMaxLengthOfData(int &_max_length_of_data);
     void setDx(float _dx);
     void add(float _data);
