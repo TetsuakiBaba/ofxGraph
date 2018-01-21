@@ -53,6 +53,8 @@ void ofxGraph::setup(int _x, int _y, int _w, int _h)
     
     min_height = panel.getHeight()+20;
     min_width  = panel.getWidth()+100;
+    
+    grid = 10;
 }
 
 void ofxGraph::setup()
@@ -121,6 +123,12 @@ void ofxGraph::setName(string _name)
     }
 }
 
+int ofxGraph::getGrid(int _value, int _grid)
+{
+    int result;
+    result = _grid*(_value/_grid);
+    return result;
+}
 void ofxGraph::setPosition(float _x, float _y)
 {
     r.x = _x;
@@ -129,7 +137,7 @@ void ofxGraph::setPosition(float _x, float _y)
 
 void ofxGraph::setSize(float _w, float _h)
 {
-    r.width = _w;
+    r.width = getGrid(_w, grid);
     r.height = _h;
 }
 
@@ -150,12 +158,21 @@ void ofxGraph::setDx(float _dx)
 
 void ofxGraph::add(float _data)
 {
+    add(_data, OFXGRAPH_LABEL_NONE);
+}
+
+void ofxGraph::add(float _data, int _label)
+{
+    
     if( !toggle_pause ){
         data.push_back(_data);
+        label.push_back(_label);
         while( data.size() > max_length_of_data ){
             data.erase(data.begin());
+            label.erase(label.begin());
         }
-        
+
+
         max_data = *max_element(data.begin(), data.end());
         min_data = *min_element(data.begin(), data.end());
     }
@@ -164,6 +181,7 @@ void ofxGraph::add(float _data)
 void ofxGraph::clear()
 {
     data.clear();
+    label.clear();
 }
 
 void ofxGraph::basicOperation(ofxPanel _panel)
@@ -216,6 +234,7 @@ void ofxGraph::basicOperation(ofxPanel _panel)
             if( r.width < min_width ){
                 r.width = min_width;
             }
+
             
         }
         else if( flg_inside_r_gui == true ){
@@ -224,6 +243,7 @@ void ofxGraph::basicOperation(ofxPanel _panel)
         else if( flg_inside_r_data == true ){
             setPosition(r.x+ofGetMouseX()-dragged_start_point.x,
                         r.y+ofGetMouseY()-dragged_start_point.y);
+
         }
         dragged_start_point.set(ofGetMouseX(), ofGetMouseY());
     }
@@ -284,6 +304,12 @@ void ofxGraph::draw()
                 ofVertex(r.x + x,
                          -0.8*(r.height/2)*(data[i]/rate) + r.y + r.height/2);
                 x = x + r.width/(float)data.size();
+                if( label[i] == OFXGRAPH_LABEL_MARKER ){
+                    
+                    ofDrawCircle(r.x + x - 4,
+                                 -0.8*(r.height/2)*(data[i]/rate) + r.y + r.height/2 ,
+                                 8);
+                }
             }
             ofEndShape();
         }
@@ -322,21 +348,51 @@ void ofxGraph::draw()
                        r.x+pos_x,-0.8*(r.height/2)*(data[pos]/rate) + r.y + r.height/2);
             ofFill();
             ofSetColor(c_fill);
-            ofDrawRectangle(font_parameter.getStringBoundingBox(ofToString(dx*(data.size()-pos-1))+","+ofToString(data[pos]), ofGetMouseX(), ofGetMouseY()));
-            ofDrawRectangle(font_parameter.getStringBoundingBox("data size: "+ofToString(data.size()),r.x, r.y+r.height));
+            ofRectangle r_background = font_parameter.getStringBoundingBox(ofToString(dx*(data.size()-pos-1))+", "+ofToString(data[pos]), ofGetMouseX()+10, ofGetMouseY());
+            r_background.set(r_background.x-2, r_background.y-2, r_background.width+4, r_background.height+4);
+            ofDrawRectangle(r_background);
+
             ofSetColor(color);
-            font_parameter.drawString(ofToString(dx*(data.size()-pos-1))+","+ofToString(data[pos]), ofGetMouseX(), ofGetMouseY());
+            font_parameter.drawString(ofToString(dx*(data.size()-pos-1))+", "+ofToString(data[pos]), ofGetMouseX()+10, ofGetMouseY());
             
+            
+
+            
+
+            // max y
             string str = ofToString(max_data);
+            r_background.set(font_parameter.getStringBoundingBox(str, 0,0));
+            r_background.setX(r.x+10);
+            r_background.setY(r.y+r.height/2 - r_background.height/2 - 0.8*(r.height/2)*(max_data/rate));
+            ofSetColor(c_fill);
+            ofDrawRectangle(r_background);
+            ofSetColor(color);
+            ofDrawLine(r_background.x-15, r_background.y+r_background.height/2,
+                       r_background.x-5, r_background.y+r_background.height/2);
             font_parameter.drawString(str,
-                                      r.x-font_parameter.getStringBoundingBox(str, 0, 0).width,
-                                      r.y+r.height/2 + font_parameter.getStringBoundingBox(str, 0, 0).height/2 - 0.8*(r.height/2)*(max_data/rate));
+                                      r.x+10,
+                                      r.y+r.height/2 + r_background.height/2 - 0.8*(r.height/2)*(max_data/rate));
+            
+            // min y
             str = ofToString(min_data);
+            r_background.set(font_parameter.getStringBoundingBox(str, 0,0));
+            r_background.setX(r.x+10);
+            r_background.setY(r.y+r.height/2 - r_background.height/2 - 0.8*(r.height/2)*(min_data/rate));
+            ofSetColor(c_fill);
+            ofDrawRectangle(r_background);
+            ofSetColor(color);
+            ofDrawLine(r_background.x-15, r_background.y+r_background.height/2,
+                       r_background.x-5, r_background.y+r_background.height/2);
             font_parameter.drawString(str,
-                                      r.x-font_parameter.getStringBoundingBox(str, 0, 0).width,
+                                      r.x+10,
                                       r.y+r.height/2+font_parameter.getStringBoundingBox(str, 0, 0).height/2 - 0.8*(r.height/2)*(min_data/rate));
             
+
+            // data size
             str = "data size: "+ofToString(data.size());
+            ofSetColor(c_fill);
+            ofDrawRectangle(font_parameter.getStringBoundingBox("data size: "+ofToString(data.size()),r.x, r.y+r.height));
+            ofSetColor(color);
             font_parameter.drawString(str,
                                       r.x,
                                       r.y+r.height);

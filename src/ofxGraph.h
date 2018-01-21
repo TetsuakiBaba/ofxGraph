@@ -4,6 +4,10 @@
 #include "ofxXmlSettings.h"
 #include "ofxGui.h"
 
+#define OFXGRAPH_LABEL_MARKER 1
+#define OFXGRAPH_LABEL_NONE 2
+
+
 class ofxGraph{
 public:
     ofxGraph();
@@ -13,6 +17,7 @@ public:
     void setMaxLengthOfData(int &_max_length_of_data);
     void setDx(float _dx);
     void add(float _data);
+    void add(float _data, int _label);
     void draw();
     void setName(string _name);
     void setPosition(float _x, float _y);
@@ -23,6 +28,7 @@ public:
     void saveCSV();
     void basicOperation(ofxPanel _panel);
     void setBufSize(int _bufsize);
+    int  getGrid(int _value, int _gris);
     int max_length_of_data;
     ofColor color;
     ofColor c_text;
@@ -37,7 +43,9 @@ public:
     bool flg_inside_r_expand = false;
     bool flg_inside_r_gui = false;
     
+    
     vector<float> data;
+    vector<int>   label;
 
     float dx;
     float min_height;
@@ -59,6 +67,7 @@ public:
     ofxButton button_clear;
     ofxToggle toggle_pause;
     ofxToggle toggle_no_draw;
+    int grid;
 };
 
 class ofxGraph2D : public ofxGraph
