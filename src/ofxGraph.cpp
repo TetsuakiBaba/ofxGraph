@@ -103,7 +103,11 @@ void ofxGraph::setColor(ofColor _color)
 void ofxGraph::saveCSV()
 {
     ofFile csvfile;
-    csvfile.open(ofToDataPath("ofxGraph/csv/"+name)+ofGetTimestampString()+".csv", ofFile::WriteOnly);
+    ofFileDialogResult result = ofSystemSaveDialog(ofGetTimestampString()+".csv", "Choose save directory");
+    cout << result.getName() << endl;
+    cout << result.getPath() << endl;
+
+    csvfile.open(result.getPath(), ofFile::WriteOnly);
     for( int i = data.size()-1; i >= 0; i-- ){
         csvfile << ofToString(dx*(data.size()-1 - i)) << ",";
         csvfile << ofToString(data[i]) << "\n";
@@ -545,6 +549,8 @@ void ofxGraph2D::clear()
 void ofxGraph2D::saveCSV()
 {
     ofFile csvfile;
+
+   
     csvfile.open(ofToDataPath("ofxGraph/csv/"+name)+ofGetTimestampString()+".csv", ofFile::WriteOnly);
     for( int i = data.size()-1; i >= 0; i-- ){
         for( int j = data[i].size()-1; j >= 0; j-- ){
