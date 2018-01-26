@@ -14,17 +14,29 @@ void ofApp::setup(){
     
     // multiplotting ofxGraph
     graph_multiplot.setup("Multiplot Sample");
-    graph.setDx(1.0);
-    graph.setColor(ofColor::azure);
-    graph.setLabel({"mouseX","mouseY","framerate"});
+    graph_multiplot.setDx(1.0);
+    graph_multiplot.setColor(ofColor::azure);
+    graph_multiplot.setLabel({"Noise[0.1]","Noise[0.12]","Noise[0.5]"});
 
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    static float x=0.0;
+    static float y=0.0;
+    static float z=0.0;
     graph.add(ofRandom(-100,100));
     
-    graph_multiplot.add({ofRandom(-100,100),ofRandom(-100,100),ofRandom(-100,100)});
+    x=x+0.1;
+    y=y+0.2;
+    z=z+0.5;
+    
+    vector<float>value;
+    value.push_back(ofNoise(x)-0.5);
+    value.push_back(ofNoise(y)-0.5);
+    value.push_back(ofNoise(z)-0.5);
+    graph_multiplot.add(value);
+    
 }
 
 //--------------------------------------------------------------

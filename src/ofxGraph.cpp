@@ -119,15 +119,22 @@ void ofxGraph::setColor(ofColor _color)
 void ofxGraph::saveCSV()
 {
     ofFile csvfile;
-    ofFileDialogResult result = ofSystemSaveDialog(ofGetTimestampString()+".csv", "Choose save directory");
+    ofFileDialogResult result = ofSystemSaveDialog(name+"-"+ofGetTimestampString()+".csv", "Choose save directory");
     cout << result.getName() << endl;
     cout << result.getPath() << endl;
 
     csvfile.open(result.getPath(), ofFile::WriteOnly);
-    for( int i = data.size()-1; i >= 0; i-- ){
-        csvfile << ofToString(dx*(data.size()-1 - i)) << ",";
-        csvfile << ofToString(data[i]) << "\n";
+
+    int j = plotdata[0].size()-1;
+    while( j >= 0 ){
+        csvfile << ofToString(plotdata[0].size()-1-dx*j) << ",";
+        for( int i = 0; i < plotdata.size(); i++ ){
+            csvfile << ofToString(plotdata[i][j]) << ",";
+        }
+        csvfile << "\n";
+        j--;
     }
+
 }
 
 
