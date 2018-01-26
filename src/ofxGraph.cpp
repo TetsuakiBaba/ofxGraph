@@ -25,9 +25,10 @@ void ofxGraph::setup(int _x, int _y, int _w, int _h)
     dx = 1.0;                 // default
     max_length_of_data = 128; // default
     setColor(ofColor::white);   // default
-    max_data = 10;            // default
-    min_data = 0;             // default
+    max_data = -100000;            // default
+    min_data = 100000;             // default
     name = "noname";          // default
+    label.resize(1);
     
     font_title.load(ofToDataPath("ofxGraph/DIN Alternate Bold.ttf"), 18);
     font_parameter.load(ofToDataPath("ofxGraph/DIN Alternate Bold.ttf"), 10);
@@ -57,20 +58,36 @@ void ofxGraph::setup(int _x, int _y, int _w, int _h)
     grid = 10;
 }
 
-void ofxGraph::setup()
+void ofxGraph::setup(string _name)
 {
     setup(ofRandom(300)+200, ofRandom(200)+200, 500, 250);
+    setName(_name);
 }
 
 void ofxGraph::setColor(ofColor _color)
 {
-    color = _color;
-    c_text = color;
-    c_background = color.getInverted();
+    color.clear();
+    color.push_back(_color);
+    {
+        color.push_back(ofColor::lightBlue);
+        color.push_back(ofColor::lightPink);
+        color.push_back(ofColor::lightGreen);
+        color.push_back(ofColor::lightSalmon);
+        color.push_back(ofColor::lightYellow);
+        color.push_back(ofColor::lightSeaGreen);
+        color.push_back(ofColor::lightGray);
+        color.push_back(ofColor::lightGoldenRodYellow);
+        color.push_back(ofColor::lightGrey);
+    }
+    
+    c_text = _color;
+    c_background = _color.getInverted();
     c_background.set(c_background.r, c_background.g, c_background.b, 160);
     
-    c_fill = color.getLerped(color.getInverted(), 0.5);
+    c_fill = _color.getLerped(_color.getInverted(), 0.5);
     c_fill.set(c_fill.r, c_fill.g, c_fill.b, 160);
+    
+    
 
     slider_bufsize.setTextColor(c_text);
     slider_bufsize.setBackgroundColor(c_background);
@@ -91,14 +108,13 @@ void ofxGraph::setColor(ofColor _color)
     toggle_no_draw.setTextColor(c_text);
     toggle_no_draw.setBackgroundColor(c_background);
     toggle_no_draw.setFillColor(c_fill);
-
-
-
     
     panel.setTextColor(c_text);
     panel.setFillColor(c_fill);
     panel.setBackgroundColor(c_background);
     panel.setHeaderBackgroundColor(c_background);
+    
+
 }
 void ofxGraph::saveCSV()
 {
@@ -160,32 +176,106 @@ void ofxGraph::setDx(float _dx)
     dx = _dx;
 }
 
+void ofxGraph::add(vector<float> _data)
+{
+    add(_data, OFXGRAPH_POINT_LABEL_NONE);
+}
+
+void ofxGraph::add(vector<float> _data, int _label)
+{
+    vector<float> max;
+    vector<float> min;
+    
+    if( _data.size() > label.size() ){
+        label.resize(_data.size());
+    }
+    
+    
+    if( !toggle_pause ){
+        if( plotdata.size() < _data.size() ){
+            plotdata.clear();
+            plotdata.resize(_data.size());
+            plotlabel.clear();
+            plotlabel.resize(_data.size());
+        }
+        
+        for( int i = 0; i < _data.size(); i++ ){
+            plotdata[i].push_back(_data[i]);
+            plotlabel[i].push_back(_label);
+            while( plotdata[i].size() > max_length_of_data ){
+                plotdata[i].erase(plotdata[i].begin());
+                plotlabel[i].erase(plotlabel[i].begin());
+            }
+            max.push_back(*max_element(plotdata[i].begin(), plotdata[i].end()));
+            min.push_back(*min_element(plotdata[i].begin(), plotdata[i].end()));
+        }
+        
+        max_data = *max_element(max.begin(), max.end());
+        min_data = *min_element(min.begin(), min.end());
+    }
+}
+
+float ofxGraph::getY(float _x)
+{
+    return getY(_x, 0);
+}
+float ofxGraph::getY(float _x, int _number)
+{
+    if( plotdata.size() < _number ){
+        return -1;
+    }
+    vector<float>v;
+    for( int i = plotdata[0].size()-1; i >= 0; i--){
+        v.push_back(plotdata[0][i]);
+    }
+    
+    int index = _x/dx;
+    return v[index];
+    
+}
+
+ofPoint ofxGraph::getMaxPoint(float _x_left, float x_right)
+{
+    ofPoint p_result;
+    int max = -10000;
+    int pos;
+    vector<float>v;
+    for( int j = 0; j < plotdata.size(); j++ ){
+
+        for( int i = plotdata[j].size()-1; i >= 0; i--){
+            v.push_back(plotdata[j][i]);
+        }
+        
+        for( float i = _x_left; i <= x_right; i = i + dx){
+            int index = i/dx;
+            if( v[index] > max ){
+                max = v[index];
+                pos = index;
+            }
+        }
+    }
+    p_result.set(pos*dx, max);
+    return p_result;
+}
+
+
+
 void ofxGraph::add(float _data)
 {
-    add(_data, OFXGRAPH_LABEL_NONE);
+    add(_data, OFXGRAPH_POINT_LABEL_NONE);
 }
 
 void ofxGraph::add(float _data, int _label)
 {
-    
-    if( !toggle_pause ){
-        data.push_back(_data);
-        label.push_back(_label);
-        while( data.size() > max_length_of_data ){
-            data.erase(data.begin());
-            label.erase(label.begin());
-        }
-
-
-        max_data = *max_element(data.begin(), data.end());
-        min_data = *min_element(data.begin(), data.end());
-    }
+    vector<float>d;
+    d.push_back(_data);
+    add(d, _label);
 }
 
 void ofxGraph::clear()
 {
-    data.clear();
-    label.clear();
+    plotdata.clear();
+    plotlabel.clear();
 }
 
 void ofxGraph::basicOperation(ofxPanel _panel)
@@ -256,12 +346,12 @@ void ofxGraph::basicOperation(ofxPanel _panel)
     
     
     if( flg_inside_r_data == true  ){
-        ofSetColor(color);
+        ofSetColor(color[0]);
         img_move.draw(ofGetMouseX()-img_move.getWidth(),
                       ofGetMouseY()-img_move.getHeight());
     }
     if( flg_inside_r_expand == true ){
-        ofSetColor(color);
+        ofSetColor(color[0]);
         img_expand.draw(ofGetMouseX()-img_expand.getWidth(),
                         ofGetMouseY()-img_expand.getHeight());
     }
@@ -280,134 +370,152 @@ void ofxGraph::basicOperation(ofxPanel _panel)
    
 }
 
+void ofxGraph::setLabel(vector<string>_label)
+{
+    label.clear();
+    label = _label;
+}
 void ofxGraph::draw()
 {
+
     ofNoFill();
-    ofSetColor(color);
+    ofSetColor(color[0]);
     ofDrawRectangle(r);
     font_title.drawString(name, r.x, r.y);
     
     panel.setPosition(r.x+r.width-panel_size.x, r.y);
     float x = 0;
     float rate = 0.0;
-
-    if( data.size() > 0 ){
-
-        if( max_data > fabs(min_data) ){
-            rate = max_data;
-        }
-        else{
-            rate = min_data;
-        }
-        rate = fabs(rate);
-
-        if( toggle_no_draw == false ){
-            ofSetPolyMode(OF_POLY_WINDING_ODD);
-            ofBeginShape();
-            for( int i = data.size()-1; i >= 0; i-- ){
-                ofVertex(r.x + x,
-                         -0.8*(r.height/2)*(data[i]/rate) + r.y + r.height/2);
-                x = x + r.width/(float)data.size();
-                if( label[i] == OFXGRAPH_LABEL_MARKER ){
-                    
-                    ofDrawCircle(r.x + x - 4,
-                                 -0.8*(r.height/2)*(data[i]/rate) + r.y + r.height/2 ,
-                                 8);
-                }
-            }
-            ofEndShape();
-        }
-        
-    }
-    x = 0.0;
     
+    for( int j = 0; j < plotdata.size(); j++ ){
+        if( plotdata[j].size() > 0 ){
+            
+            if( max_data > fabs(min_data) ){
+                rate = max_data;
+            }
+            else{
+                rate = min_data;
+            }
+            rate = fabs(rate);
+            
+            if( toggle_no_draw == false ){
+                ofSetColor(color[j%10]);
+                ofSetPolyMode(OF_POLY_WINDING_ODD);
+                ofBeginShape();
+                for( int i = plotdata[j].size()-1; i >= 0; i-- ){
+                    ofVertex(r.x + x,
+                             -0.8*(r.height/2)*(plotdata[j][i]/rate) + r.y + r.height/2);
+                    x = x + r.width/(float)plotdata[j].size();
+                    if( plotlabel[j][i] == OFXGRAPH_POINT_LABEL_MARKER ){
+                        ofDrawCircle(r.x + x - 4,
+                                     -0.8*(r.height/2)*(plotdata[j][i]/rate) + r.y + r.height/2 ,
+                                     8);
+                    }
+                }
 
+                ofEndShape();
+            }
+            
+        }
+        x = 0.0;
+    }
+
+    
+    
     
     basicOperation(panel);
     
     // Show detail information
     if( r.inside(ofGetMouseX(), ofGetMouseY()) ){
         
+        
+        if( plotdata.size() > 0 && toggle_no_draw == false ){
 
-        if( data.size() > 0 && toggle_no_draw == false ){
-            float d = 1000.0;
-            int pos = 0;
-            int pos_x = 0;
-            for( int i = data.size()-1; i >= 0; i-- ){
-                ofDrawCircle(r.x + x,
-                             -0.8*(r.height/2)*(data[i]/rate) + r.y + r.height/2,
-                             2.0);
-                if( ofDist(ofGetMouseX(), ofGetMouseY(),
-                           r.x+x,-0.8*(r.height/2)*(data[i]/rate) + r.y + r.height/2) < d ){
-                    pos = i;
-                    d = ofDist(ofGetMouseX(), ofGetMouseY(),
-                               r.x+x,-0.8*(r.height/2)*(data[i]/rate) + r.y + r.height/2);
-                    pos_x = x;
+            for( int j = 0; j < plotdata.size(); j++ ){
+                ofSetColor(color[j%10]);
+                float d = 1000.0;
+                int pos = 0;
+                int pos_x = 0;
+                x = 0.0;
+                for( int i = plotdata[j].size()-1; i >= 0; i-- ){
+                    ofDrawCircle(r.x + x,
+                                 -0.8*(r.height/2)*(plotdata[j][i]/rate) + r.y + r.height/2,
+                                 2.0);
+                    if( ofDist(ofGetMouseX(), ofGetMouseY(),
+                               r.x+x,-0.8*(r.height/2)*(plotdata[j][i]/rate) + r.y + r.height/2) < d ){
+                        pos = i;
+                        d = ofDist(ofGetMouseX(), ofGetMouseY(),
+                                   r.x+x,-0.8*(r.height/2)*(plotdata[j][i]/rate) + r.y + r.height/2);
+                        pos_x = x;
+                    }
+                    x = x + r.width/(float)plotdata[j].size();
                 }
-                x = x + r.width/(float)data.size();
+                
+                string str;
+                
+                // show nearest plot information
+                ofDrawLine(ofGetMouseX()+10, ofGetMouseY()-12*j,
+                           r.x+pos_x,-0.8*(r.height/2)*(plotdata[j][pos]/rate) + r.y + r.height/2);
+                ofFill();
+                ofSetColor(c_fill);
+                str = label[j] + ":" +ofToString(dx*(plotdata[j].size()-pos-1))+", "+ofToString(plotdata[j][pos]);
+                ofRectangle r_background = font_parameter.getStringBoundingBox(str, ofGetMouseX()+10, ofGetMouseY()-12*j);
+                r_background.set(r_background.x, r_background.y, r_background.width, r_background.height);
+                ofDrawRectangle(r_background);
+                
+                ofSetColor(color[j%10]);
+                font_parameter.drawString(str, ofGetMouseX()+10, ofGetMouseY()-12*j);
+                
+                
+                // max y
+                str = ofToString(max_data);
+                r_background.set(font_parameter.getStringBoundingBox(str, 0,0));
+                r_background.setX(r.x+10);
+                r_background.setY(r.y+r.height/2 - r_background.height/2 - 0.8*(r.height/2)*(max_data/rate));
+                ofSetColor(c_fill);
+                ofDrawRectangle(r_background);
+                ofSetColor(color[0]);
+                ofDrawLine(r_background.x-15, r_background.y+r_background.height/2,
+                           r_background.x-5, r_background.y+r_background.height/2);
+                font_parameter.drawString(str,
+                                          r.x+10,
+                                          r.y+r.height/2 + r_background.height/2 - 0.8*(r.height/2)*(max_data/rate));
+                
+                // min y
+                str = ofToString(min_data);
+                r_background.set(font_parameter.getStringBoundingBox(str, 0,0));
+                r_background.setX(r.x+10);
+                r_background.setY(r.y+r.height/2 - r_background.height/2 - 0.8*(r.height/2)*(min_data/rate));
+                ofSetColor(c_fill);
+                ofDrawRectangle(r_background);
+                ofSetColor(color[0]);
+                ofDrawLine(r_background.x-15, r_background.y+r_background.height/2,
+                           r_background.x-5, r_background.y+r_background.height/2);
+                font_parameter.drawString(str,
+                                          r.x+10,
+                                          r.y+r.height/2+font_parameter.getStringBoundingBox(str, 0, 0).height/2 - 0.8*(r.height/2)*(min_data/rate));
+                
+                
+                // data size
+                str = "data size["+ofToString(j)+"]: "+ ofToString(plotdata[j].size());
+                ofSetColor(c_fill);
+                ofDrawRectangle(font_parameter.getStringBoundingBox(
+                                                                    str,
+                                                                    r.x,
+                                                                    r.y+r.height+j*12
+                                                                    ));
+                ofSetColor(color[0]);
+                font_parameter.drawString(str,
+                                          r.x,
+                                          r.y+r.height+j*12);
             }
             
-            // show nearest plot information
-            ofDrawLine(ofGetMouseX(), ofGetMouseY(),
-                       r.x+pos_x,-0.8*(r.height/2)*(data[pos]/rate) + r.y + r.height/2);
-            ofFill();
-            ofSetColor(c_fill);
-            ofRectangle r_background = font_parameter.getStringBoundingBox(ofToString(dx*(data.size()-pos-1))+", "+ofToString(data[pos]), ofGetMouseX()+10, ofGetMouseY());
-            r_background.set(r_background.x-2, r_background.y-2, r_background.width+4, r_background.height+4);
-            ofDrawRectangle(r_background);
-
-            ofSetColor(color);
-            font_parameter.drawString(ofToString(dx*(data.size()-pos-1))+", "+ofToString(data[pos]), ofGetMouseX()+10, ofGetMouseY());
-            
-            
-
-            
-
-            // max y
-            string str = ofToString(max_data);
-            r_background.set(font_parameter.getStringBoundingBox(str, 0,0));
-            r_background.setX(r.x+10);
-            r_background.setY(r.y+r.height/2 - r_background.height/2 - 0.8*(r.height/2)*(max_data/rate));
-            ofSetColor(c_fill);
-            ofDrawRectangle(r_background);
-            ofSetColor(color);
-            ofDrawLine(r_background.x-15, r_background.y+r_background.height/2,
-                       r_background.x-5, r_background.y+r_background.height/2);
-            font_parameter.drawString(str,
-                                      r.x+10,
-                                      r.y+r.height/2 + r_background.height/2 - 0.8*(r.height/2)*(max_data/rate));
-            
-            // min y
-            str = ofToString(min_data);
-            r_background.set(font_parameter.getStringBoundingBox(str, 0,0));
-            r_background.setX(r.x+10);
-            r_background.setY(r.y+r.height/2 - r_background.height/2 - 0.8*(r.height/2)*(min_data/rate));
-            ofSetColor(c_fill);
-            ofDrawRectangle(r_background);
-            ofSetColor(color);
-            ofDrawLine(r_background.x-15, r_background.y+r_background.height/2,
-                       r_background.x-5, r_background.y+r_background.height/2);
-            font_parameter.drawString(str,
-                                      r.x+10,
-                                      r.y+r.height/2+font_parameter.getStringBoundingBox(str, 0, 0).height/2 - 0.8*(r.height/2)*(min_data/rate));
-            
-
-            // data size
-            str = "data size: "+ofToString(data.size());
-            ofSetColor(c_fill);
-            ofDrawRectangle(font_parameter.getStringBoundingBox("data size: "+ofToString(data.size()),r.x, r.y+r.height));
-            ofSetColor(color);
-            font_parameter.drawString(str,
-                                      r.x,
-                                      r.y+r.height);
         }
-        
-        
         panel.draw();
+        
     }
     
 }
-
 
 
 
@@ -434,7 +542,7 @@ void ofxGraph2D::setup(int _x, int _y, int _w, int _h)
     r.set(_x, _y, _w, _h);
     dx = 1.0;
     max_length_of_data = 128;
-    color.set(255,255,255);
+    setColor(ofColor::white);
     max_data = 10;
     min_data = 0;
     name = "noname";
@@ -496,7 +604,7 @@ void ofxGraph2D::add(vector<float>_data)
 void ofxGraph2D::draw()
 {
     ofNoFill();
-    ofSetColor(color);
+    ofSetColor(color[0]);
     ofDrawRectangle(r);
     font_title.drawString(name, r.x, r.y);
     panel.setPosition(r.x+r.width-80, r.y);
@@ -508,7 +616,7 @@ void ofxGraph2D::draw()
         
         for( int i = 0; i < data.size(); i++ ){
             for( int j = 0; j < data[i].size(); j++ ){
-                glColor4f(color.r/255.0, color.g/255.0, color.b/255.0, data[i][j]/max_data);
+                glColor4f(color[0].r/255.0, color[0].g/255.0, color[0].b/255.0, data[i][j]/max_data);
                 glVertex2f(r.x+x,
                            r.y +  r.height*j/max_size_of_data2d);
                 
@@ -526,7 +634,7 @@ void ofxGraph2D::draw()
         ofSetColor(c_fill);
         ofDrawRectangle(font_parameter.getStringBoundingBox(str, r.x, r.y+r.height));
         
-        ofSetColor(color);
+        ofSetColor(color[0]);
         font_parameter.drawString(str,
                                   r.x,
                                   r.y+r.height);

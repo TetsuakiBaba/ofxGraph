@@ -8,22 +8,30 @@ void ofApp::setup(){
     ofxGuiSetFont(ofToDataPath("ofxGraph/DIN Alternate Bold.ttf"), 10);
     
     // ofxGraph Init
-    graph.setup(100, 100, 600, 300);
-    graph.setName("sample");     // it automatically loads setting file, (sample.xml)
+    graph.setup("Sample");
     graph.setDx(1.0); // which means delta of time
     graph.setColor(ofColor::white);  // ofColor(255,255,255)
+    
+    // multiplotting ofxGraph
+    graph_multiplot.setup("Multiplot Sample");
+    graph.setDx(1.0);
+    graph.setColor(ofColor::azure);
+    graph.setLabel({"mouseX","mouseY","framerate"});
 
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
     graph.add(ofRandom(-100,100));
+    
+    graph_multiplot.add({ofRandom(-100,100),ofRandom(-100,100),ofRandom(-100,100)});
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofBackground(50,50,50);
     graph.draw();
+    graph_multiplot.draw();
 }
 
 //--------------------------------------------------------------

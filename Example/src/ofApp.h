@@ -23,5 +23,6 @@ public:
     void gotMessage(ofMessage msg);
     
     ofxGraph graph;
+    ofxGraph graph_multiplot;
 		
 };

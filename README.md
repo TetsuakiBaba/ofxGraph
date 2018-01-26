@@ -2,13 +2,13 @@ ofxGraph
 ====
 
 ## Description
-ofxGraph is a simple addon library for openframeworks.
+ofxGraph is a graph plotting addon for openframeworks.
 
-1. Adjustable graph size and position manually
-2. shows graph
-3. shows detailed plot data information
-4. Flexible buffer size
-5. CSV file export
+1. single/multiple plot
+2. Manual adjustable graph size and position
+3. detailed plot data information
+4. Adjustable buffer size
+5. CSV file export with a save dialog
 6. Automatic saving(position and size). except for ofxGui settings.
 
 ## Usage
@@ -16,12 +16,12 @@ ofxGraph is a simple addon library for openframeworks.
 void ofApp::setup(){
 
 // ofxGraph Init
-  graph.setup();
-  graph.setName("sample");     // it automatically loads setting file, (sample.xml)
+  graph.setup("sample");
   graph.setDx(1.0); // which means delta of time
   graph.setColor(ofColor::white);  // ofColor(255,255,255)
 }
 void ofApp::update(){
+  // plot a random data on a each frame
   graph.add(ofRandom(-100,100));
 }
 
@@ -32,11 +32,8 @@ void ofApp::draw(){
 ```
 See Example for more detailed.
 
-![Example screenshot](/snapshot.png)
-<https://www.youtube.com/watch?v=bwaJbC1F6sI&feature=youtu.be>
+![Example screenshot](/screenshot.png)
 
-![Example of FFT and Spectrum](/ofxGraph_FFT_Example.png)
-<https://www.youtube.com/watch?v=4i5nDxlcuS0&feature=youtu.be>
 ## Install
 ofxGui and ofxXmlSettings are required.
 

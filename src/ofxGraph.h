@@ -4,8 +4,8 @@
 #include "ofxXmlSettings.h"
 #include "ofxGui.h"
 
-#define OFXGRAPH_LABEL_MARKER 1
-#define OFXGRAPH_LABEL_NONE 2
+#define OFXGRAPH_POINT_LABEL_MARKER 1
+#define OFXGRAPH_POINT_LABEL_NONE 2
 
 
 class ofxGraph{
@@ -13,12 +13,19 @@ public:
     ofxGraph();
     ~ofxGraph();
     void setup(int _x, int _y, int _w, int _h);
-    void setup();
+    void setup(string _name);
     void setMaxLengthOfData(int &_max_length_of_data);
     void setDx(float _dx);
     void add(float _data);
     void add(float _data, int _label);
+    void add(vector<float> _data, int _label);
+    void add(vector<float> _data);
+    void setLabel(vector<string>_label);
     void draw();
+    void drawtest();
+    ofPoint getMaxPoint(float _x_left, float x_right);
+    float getY(float _x);
+    float getY(float _x, int _number);
     void setName(string _name);
     void setPosition(float _x, float _y);
     void setColor(ofColor _color);
@@ -30,7 +37,7 @@ public:
     void setBufSize(int _bufsize);
     int  getGrid(int _value, int _gris);
     int max_length_of_data;
-    ofColor color;
+    vector<ofColor> color;
     ofColor c_text;
     ofColor c_background;
     ofColor c_fill;
@@ -45,7 +52,11 @@ public:
     
     
     vector<float> data;
-    vector<int>   label;
+    vector<vector<float>> plotdata;
+//    vector<int>   label;
+    vector<vector<int>> plotlabel;
+    
+    vector<string>label;
 
     float dx;
     float min_height;
