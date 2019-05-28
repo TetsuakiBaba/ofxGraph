@@ -36,6 +36,9 @@ public:
     void basicOperation(ofxPanel _panel);
     void setBufSize(int _bufsize);
     int  getGrid(int _value, int _gris);
+    vector<float> getPlotdataY(int _number);
+    vector<float> getPlotdataY();
+    int getPlotdataSize();
     int max_length_of_data;
     vector<ofColor> color;
     ofColor c_text;

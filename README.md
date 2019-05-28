@@ -1,4 +1,4 @@
-ofxGraph
+ofxGraph: a simple plotter for openframeworks
 ====
 
 ## Description
@@ -12,6 +12,8 @@ ofxGraph is a graph plotting addon for openframeworks.
 6. Automatic saving(position and size). except for ofxGui settings.
 
 ## Usage
+ 1. Copy ofxGraph/Example/bin/data/ofxGraph directory to  your_OF_project_directory/bin/data
+ 2. Below is a minimal code to use ofxGraph.
 ```c++
 void ofApp::setup(){
 
@@ -30,6 +32,7 @@ void ofApp::draw(){
   graph.draw();
 }
 ```
+
 See Example for more detailed.
 
 ![Example screenshot](/screenshot.png)

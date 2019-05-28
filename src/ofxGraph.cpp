@@ -30,8 +30,8 @@ void ofxGraph::setup(int _x, int _y, int _w, int _h)
     name = "noname";          // default
     label.resize(1);
     
-    font_title.load(ofToDataPath("ofxGraph/DIN Alternate Bold.ttf"), 18);
-    font_parameter.load(ofToDataPath("ofxGraph/DIN Alternate Bold.ttf"), 10);
+    font_title.load(ofToDataPath("ofxGraph/DIN Alternate Bold.ttf"), 12);
+    font_parameter.load(ofToDataPath("ofxGraph/DIN Alternate Bold.ttf"), 9);
     img_expand.load(ofToDataPath("ofxGraph/expand.png"));
     img_move.load(ofToDataPath("ofxGraph/move.png"));
     
@@ -222,10 +222,40 @@ void ofxGraph::add(vector<float> _data, int _label)
     }
 }
 
+//! get Y value of plotdata[0]
 float ofxGraph::getY(float _x)
 {
     return getY(_x, 0);
 }
+
+//! get Y plotdata.
+//! \param _number: default is  plotdata[0]
+vector<float> ofxGraph::getPlotdataY(int _number)
+{
+    vector<float>result;
+    if( _number+1 > plotdata.size() ){
+        return result;
+    }
+
+    for( int i = 0; i < plotdata[_number].size(); i++ ){
+        result.push_back(plotdata[_number][i]);
+    }
+    return result;
+}
+
+int ofxGraph::getPlotdataSize()
+{
+    if( plotdata.size() > 0 ){
+        return plotdata[0].size();
+    }
+}
+
+vector<float> ofxGraph::getPlotdataY()
+{
+    return getPlotdataY(0);
+}
+
+//! get Y value of plotdata[_number]
 float ofxGraph::getY(float _x, int _number)
 {
     if( plotdata.size() < _number ){

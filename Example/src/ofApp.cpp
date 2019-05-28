@@ -16,7 +16,7 @@ void ofApp::setup(){
     graph_multiplot.setup("Multiplot Sample");
     graph_multiplot.setDx(1.0);
     graph_multiplot.setColor(ofColor::azure);
-    graph_multiplot.setLabel({"Noise[0.1]","Noise[0.12]","Noise[0.5]"});
+    graph_multiplot.setLabel({"Noise[0.1]","Noise[0.2]","Noise[0.5]"});
 
 }
 
