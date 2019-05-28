@@ -417,6 +417,7 @@ void ofxGraph::draw()
 
     ofNoFill();
     ofSetColor(color[0]);
+    ofSetLineWidth(1.0f);
     ofDrawRectangle(r);
     font_title.drawString(name, r.x, r.y);
     
@@ -440,14 +441,19 @@ void ofxGraph::draw()
                 ofSetPolyMode(OF_POLY_WINDING_ODD);
                 ofBeginShape();
                 for( int i = plotdata[j].size()-1; i >= 0; i-- ){
-                    ofVertex(r.x + x,
-                             -0.8*(r.height/2)*(plotdata[j][i]/rate) + r.y + r.height/2);
-                    x = x + r.width/(float)plotdata[j].size();
                     if( plotlabel[j][i] == OFXGRAPH_POINT_LABEL_MARKER ){
-                        ofDrawCircle(r.x + x - 4,
+                        ofSetColor(ofColor::red);
+                        ofDrawCircle(r.x + x,
                                      -0.8*(r.height/2)*(plotdata[j][i]/rate) + r.y + r.height/2 ,
                                      8);
                     }
+                    else{
+                        ofSetColor(color[j%10]);
+                    }
+                    ofVertex(r.x + x,
+                             -0.8*(r.height/2)*(plotdata[j][i]/rate) + r.y + r.height/2);
+                    x = x + r.width/(float)plotdata[j].size();
+                    
                 }
 
                 ofEndShape();
