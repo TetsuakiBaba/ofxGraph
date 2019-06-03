@@ -16,7 +16,6 @@ void ofxGraph::saveSettings()
     xml_settings.setValue("settings:y", r.y);
     xml_settings.setValue("settings:w", r.width);
     xml_settings.setValue("settings:h", r.height);
-
     xml_settings.saveFile(ofToDataPath("ofxGraph/"+name+".xml"));
 }
 void ofxGraph::setup(int _x, int _y, int _w, int _h)
@@ -39,7 +38,7 @@ void ofxGraph::setup(int _x, int _y, int _w, int _h)
     slider_bufsize.addListener(this, &ofxGraph::setMaxLengthOfData);
     button_clear.addListener(this, &ofxGraph::clear);
 
-    panel_size.set(100, 16);
+    panel_size.set(120, 16);
     panel.setup();
     panel.setSize(panel_size.x, panel_size.y);
     panel.setDefaultHeight(panel_size.y);
@@ -51,7 +50,8 @@ void ofxGraph::setup(int _x, int _y, int _w, int _h)
     panel.add(toggle_pause.setup("Pause", false));
     panel.add(toggle_no_draw.setup("No draw", false));
     panel.add(button_clear.setup("Clear"));
-    
+    panel.add(toggle_auto_scale.setup("Auto Scale", false));
+    panel.add(slider_scale.setup("Y-Max", 1.0, 1.0, 1000.0));
     min_height = panel.getHeight()+20;
     min_width  = panel.getWidth()+100;
     
@@ -61,6 +61,8 @@ void ofxGraph::setup(int _x, int _y, int _w, int _h)
 void ofxGraph::setup(string _name)
 {
     setup(ofRandom(300)+200, ofRandom(200)+200, 500, 250);
+    scale = 1.0;
+    toggle_auto_scale = true;
     setName(_name);
 }
 
@@ -109,10 +111,16 @@ void ofxGraph::setColor(ofColor _color)
     toggle_no_draw.setBackgroundColor(c_background);
     toggle_no_draw.setFillColor(c_fill);
     
+    toggle_auto_scale.setTextColor(c_text);
+    toggle_auto_scale.setBackgroundColor(c_background);
+    toggle_auto_scale.setFillColor(c_fill);
+    
     panel.setTextColor(c_text);
     panel.setFillColor(c_fill);
     panel.setBackgroundColor(c_background);
     panel.setHeaderBackgroundColor(c_background);
+    
+    
     
 
 }
@@ -352,7 +360,7 @@ void ofxGraph::basicOperation(ofxPanel _panel)
         flg_inside_r_expand = false;
     }
     
-    // dragg operation
+    // Mouse drag operation
     if( flg_mouse_dragged && flg_inside_pressed == true){
         
         // Expand
@@ -412,6 +420,13 @@ void ofxGraph::setLabel(vector<string>_label)
     label.clear();
     label = _label;
 }
+
+void ofxGraph::setAutoScale(bool _is_auto_scale, float _scale)
+{
+    toggle_auto_scale = _is_auto_scale;
+    slider_scale = _scale;
+}
+
 void ofxGraph::draw()
 {
 
@@ -428,13 +443,18 @@ void ofxGraph::draw()
     for( int j = 0; j < plotdata.size(); j++ ){
         if( plotdata[j].size() > 0 ){
             
-            if( max_data > fabs(min_data) ){
-                rate = max_data;
+            if( toggle_auto_scale ){
+                if( max_data > fabs(min_data) ){
+                    rate = max_data;
+                }
+                else{
+                    rate = min_data;
+                }
+                rate = fabs(rate);
             }
             else{
-                rate = min_data;
+                rate = slider_scale;
             }
-            rate = fabs(rate);
             
             if( toggle_no_draw == false ){
                 ofSetColor(color[j%10]);
@@ -462,7 +482,7 @@ void ofxGraph::draw()
         }
         x = 0.0;
     }
-
+    ofSetColor(color[0]);
     
     
     

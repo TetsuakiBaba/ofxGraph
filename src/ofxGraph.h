@@ -29,6 +29,7 @@ public:
     void setName(string _name);
     void setPosition(float _x, float _y);
     void setColor(ofColor _color);
+    void setAutoScale(bool _is_auto_scale, float _scale);
     void setSize(float _w, float _h);
     void clear();
     void saveSettings();
@@ -52,7 +53,9 @@ public:
     bool flg_inside_r_data = false;
     bool flg_inside_r_expand = false;
     bool flg_inside_r_gui = false;
+    bool is_auto_scale = true;
     
+    float scale;
     
     vector<float> data;
     vector<vector<float>> plotdata;
@@ -81,6 +84,8 @@ public:
     ofxButton button_clear;
     ofxToggle toggle_pause;
     ofxToggle toggle_no_draw;
+    ofxToggle toggle_auto_scale;
+    ofxFloatSlider slider_scale;
     int grid;
 };
 
