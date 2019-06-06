@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    ofSetVerticalSync(true); // sync with vertical refresh rate
+    ofSetFrameRate(60);
     
     // ofxGraph uses ofxGui as a internal setting UI
     ofxGuiSetFont(ofToDataPath("ofxGraph/DIN Alternate Bold.ttf"), 10);

@@ -1,6 +1,6 @@
 ofxGraph: a simple plotter for openframeworks
 ====
-
+![Example screenshot](/ofxGraph.gif)
 ## Description
 ofxGraph is a graph plotting addon for openframeworks.
 
@@ -36,6 +36,7 @@ void ofApp::draw(){
 See Example for more detailed.
 
 ![Example screenshot](/screenshot.png)
+
 
 ## Install
 ofxGui and ofxXmlSettings are required.
