@@ -50,11 +50,13 @@ void ofxGraph::setup(int _x, int _y, int _w, int _h)
     panel.add(toggle_pause.setup("Pause", false));
     panel.add(toggle_no_draw.setup("No draw", false));
     panel.add(button_clear.setup("Clear"));
+    panel.add(toggle_graph_type.setup("Toggle plot/bar", true));
     panel.add(toggle_auto_scale.setup("Auto Scale", false));
     panel.add(slider_scale.setup("Y-Max", 1.0, 1.0, 1000.0));
     min_height = panel.getHeight()+20;
     min_width  = panel.getWidth()+100;
     
+    graph_type = OFXGRAPH_TYPE_PLOT;
     grid = 10;
 }
 
@@ -111,6 +113,10 @@ void ofxGraph::setColor(ofColor _color)
     toggle_no_draw.setBackgroundColor(c_background);
     toggle_no_draw.setFillColor(c_fill);
     
+    toggle_graph_type.setTextColor(c_text);
+    toggle_graph_type.setBackgroundColor(c_background);
+    toggle_graph_type.setFillColor(c_fill);
+    
     toggle_auto_scale.setTextColor(c_text);
     toggle_auto_scale.setBackgroundColor(c_background);
     toggle_auto_scale.setFillColor(c_fill);
@@ -145,6 +151,10 @@ void ofxGraph::saveCSV()
 
 }
 
+void ofxGraph::setGraphType(int _type)
+{
+    graph_type = _type;
+}
 
 void ofxGraph::setName(string _name)
 {
@@ -427,16 +437,9 @@ void ofxGraph::setAutoScale(bool _is_auto_scale, float _scale)
     slider_scale = _scale;
 }
 
-void ofxGraph::draw()
+void ofxGraph::drawPlot()
 {
-
-    ofNoFill();
-    ofSetColor(color[0]);
-    ofSetLineWidth(1.0f);
-    ofDrawRectangle(r);
-    font_title.drawString(name, r.x, r.y);
-    
-    panel.setPosition(r.x+r.width-panel_size.x, r.y);
+   
     float x = 0;
     float rate = 0.0;
     
@@ -484,9 +487,6 @@ void ofxGraph::draw()
     }
     ofSetColor(color[0]);
     
-    
-    
-    basicOperation(panel);
     
     // Show detail information
     if( r.inside(ofGetMouseX(), ofGetMouseY()) ){
@@ -574,8 +574,104 @@ void ofxGraph::draw()
             }
             
         }
-        panel.draw();
+       
         
+    }
+}
+void ofxGraph::drawBar()
+{
+    float x = 0;
+    float rate = 0.0;
+    float width_bar = r.width / float(plotdata.size()+2);
+    
+    for( int j = 0; j < plotdata.size(); j++ ){
+        if( plotdata[j].size() > 0 ){
+            
+            if( toggle_auto_scale ){
+                if( max_data > fabs(min_data) ){
+                    rate = max_data;
+                }
+                else{
+                    rate = min_data;
+                }
+                rate = fabs(rate);
+            }
+            else{
+                rate = slider_scale;
+            }
+            
+            if( toggle_no_draw == false ){
+                ofFill();
+                ofSetColor(color[j%10]);
+                ofSetPolyMode(OF_POLY_WINDING_ODD);
+
+                float sum, stddev, average;
+                sum = stddev = average = 0.0;
+                for( int i = plotdata[j].size()-1; i >= 0; i-- ){
+                    sum = sum + plotdata[j][i];
+                }
+                average = sum/float(plotdata[j].size());
+                for( int i = plotdata[j].size()-1; i >= 0; i-- ){
+                    stddev = stddev + pow(average-plotdata[j][i], 2);
+                }
+                stddev = sqrt(stddev/(float)plotdata[j].size());
+
+                ofDrawRectangle(r.x + width_bar + width_bar*j,
+                                -0.8*(r.height/2)*(average/rate) + r.y + r.height/2,
+                                width_bar,
+                                0.8*(r.height/2)*(average/rate));
+                if( average > 0 ){
+                    font_parameter.drawString(ofToString(average),
+                                              r.x + width_bar + width_bar*j,
+                                              -0.8*(r.height/2)*(average/rate) + r.y + r.height/2);
+                }
+                else{
+                    font_parameter.drawString(ofToString(average),
+                    r.x + width_bar + width_bar*j,
+                    -0.8*(r.height/2)*(average/rate) + r.y + r.height/2  + 10);
+                }
+                ofSetColor(ofColor::white);
+                ofDrawLine(r.x + width_bar + width_bar*j+width_bar/2.0,
+                           -0.8*(r.height/2)*(average/rate) + r.y + r.height/2-stddev/2.0,
+                           r.x + width_bar + width_bar*j+width_bar/2.0,
+                           -0.8*(r.height/2)*(average/rate) + r.y + r.height/2+stddev/2.0);
+                
+                           
+            }
+            
+        }
+        x = 0.0;
+    }
+    ofSetColor(color[0]);
+}
+void ofxGraph::draw()
+{
+    ofNoFill();
+    ofSetColor(color[0]);
+    ofSetLineWidth(1.0f);
+    ofDrawRectangle(r);
+    font_title.drawString(name, r.x, r.y);
+    panel.setPosition(r.x+r.width-panel_size.x, r.y);
+    if( toggle_graph_type ){
+        graph_type = OFXGRAPH_TYPE_PLOT;
+    }
+    else{
+        graph_type = OFXGRAPH_TYPE_BAR;
+    }
+    
+    switch( graph_type )
+    {
+        case OFXGRAPH_TYPE_PLOT:
+            drawPlot();
+            break;
+        case OFXGRAPH_TYPE_BAR:
+            drawBar();
+            break;
+    }
+    basicOperation(panel);
+    
+    if( r.inside(ofGetMouseX(), ofGetMouseY())){
+         panel.draw();
     }
     
 }

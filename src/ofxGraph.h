@@ -7,6 +7,9 @@
 #define OFXGRAPH_POINT_LABEL_MARKER 1
 #define OFXGRAPH_POINT_LABEL_NONE 2
 
+#define OFXGRAPH_TYPE_PLOT 10
+#define OFXGRAPH_TYPE_BAR 11
+
 
 class ofxGraph{
 public:
@@ -22,6 +25,8 @@ public:
     void add(vector<float> _data);
     void setLabel(vector<string>_label);
     void draw();
+    void drawPlot();
+    void drawBar();
     void drawtest();
     ofPoint getMaxPoint(float _x_left, float x_right);
     float getY(float _x);
@@ -31,6 +36,7 @@ public:
     void setColor(ofColor _color);
     void setAutoScale(bool _is_auto_scale, float _scale);
     void setSize(float _w, float _h);
+    void setGraphType(int _type);
     void clear();
     void saveSettings();
     void saveCSV();
@@ -48,6 +54,7 @@ public:
     ofRectangle r;
     ofImage img_move;
     ofImage img_expand;
+    int graph_type;
     
     bool flg_inside_pressed = false;
     bool flg_inside_r_data = false;
@@ -59,7 +66,6 @@ public:
     
     vector<float> data;
     vector<vector<float>> plotdata;
-//    vector<int>   label;
     vector<vector<int>> plotlabel;
     
     vector<string>label;
@@ -85,6 +91,7 @@ public:
     ofxToggle toggle_pause;
     ofxToggle toggle_no_draw;
     ofxToggle toggle_auto_scale;
+    ofxToggle toggle_graph_type;
     ofxFloatSlider slider_scale;
     int grid;
 };

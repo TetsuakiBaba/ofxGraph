@@ -17,6 +17,8 @@ void ofApp::setup(){
     graph_multiplot.setDx(1.0);
     graph_multiplot.setColor(ofColor::azure);
     graph_multiplot.setLabel({"Noise[0.1]","Noise[0.2]","Noise[0.5]"});
+    graph_multiplot.graph_type = OFXGRAPH_TYPE_BAR;
+    
 
 }
 
@@ -27,16 +29,11 @@ void ofApp::update(){
     static float z=0.0;
     graph.add(ofRandom(-100,100));
     
-    x=x+0.1;
-    y=y+0.2;
-    z=z+0.5;
-    
     vector<float>value;
-    value.push_back(ofNoise(x)-0.5);
-    value.push_back(ofNoise(y)-0.5);
-    value.push_back(ofNoise(z)-0.5);
+    for( int i = 0; i < 10; i++ ){
+        value.push_back(ofRandom(10*i+1));
+    }
     graph_multiplot.add(value);
-    
 }
 
 //--------------------------------------------------------------
@@ -44,6 +41,14 @@ void ofApp::draw(){
     ofBackground(50,50,50);
     graph.draw();
     graph_multiplot.draw();
+    
+    /* Ref: Direct Access to plot data
+    ofBeginShape();
+    for( int i = 0; i < graph.plotdata[0].size(); i++){
+        ofVertex(i,graph.plotdata[0][i]);
+    }
+    ofEndShape();
+     */
 }
 
 //--------------------------------------------------------------

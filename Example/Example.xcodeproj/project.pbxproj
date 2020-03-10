@@ -393,6 +393,21 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
+			<key>BA274EC7A169D538BD43A5D8</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>4</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>ofxGuiUtils.h</string>
+				<key>path</key>
+				<string>../../../addons/ofxGui/src/ofxGuiUtils.h</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
 			<key>1C0DA2561397A7DE0246858B</key>
 			<dict>
 				<key>explicitFileType</key>
@@ -547,6 +562,7 @@
 					<string>17E65988300FBD9AAA2CD0CA</string>
 					<string>ECF8674C7975F1063C5E30CA</string>
 					<string>1C0DA2561397A7DE0246858B</string>
+					<string>BA274EC7A169D538BD43A5D8</string>
 					<string>44B351490B620D04E1E7C52D</string>
 					<string>AE68B54581BE4A1DAE853180</string>
 					<string>78D67A00EB899FAC09430597</string>
@@ -702,6 +718,9 @@ else
 # Copy bin/data into App/Resources
 rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/data/"
 
+# Strip 32bit from fmod dylib
+lipo -remove i386 "${TARGET_BUILD_DIR}/${PRODUCT_NAME}.app/Contents/Frameworks/libfmodex.dylib" -o "${TARGET_BUILD_DIR}/${PRODUCT_NAME}.app/Contents/Frameworks/libfmodex.dylib" 
+
 # ---- Code Sign App Package ----
 
 # WARNING: You may have to run Clean in Xcode after changing CODE_SIGN_IDENTITY!
@@ -771,6 +790,8 @@ IFS=$(echo -en "\n\b")
 # Loop through all items.
 for ITEM in $ITEMS;
 do
+echo "Stripping invalid archs '${ITEM}'"
+lipo -remove i386 "${ITEM}" -o "${ITEM}"
 echo "Signing '${ITEM}'"
 codesign --force --verbose --sign "${CODE_SIGN_IDENTITY_FOR_ITEMS}" --entitlements "${CODE_SIGN_ENTITLEMENTS}" "${ITEM}"
 RESULT=$?
@@ -839,6 +860,8 @@ fi
 					</array>
 					<key>MACOSX_DEPLOYMENT_TARGET</key>
 					<string>10.9</string>
+					<key>OTHER_CODE_SIGN_FLAGS</key>
+					<string>--deep</string>
 					<key>OTHER_CPLUSPLUSFLAGS</key>
 					<array>
 						<string>-D__MACOSX_CORE__</string>
@@ -3694,6 +3717,8 @@ fi
 					<string>10.9</string>
 					<key>ONLY_ACTIVE_ARCH</key>
 					<string>YES</string>
+					<key>OTHER_CODE_SIGN_FLAGS</key>
+					<string>--deep</string>
 					<key>OTHER_CPLUSPLUSFLAGS</key>
 					<array>
 						<string>-D__MACOSX_CORE__</string>
@@ -3757,6 +3782,8 @@ fi
 					</array>
 					<key>MACOSX_DEPLOYMENT_TARGET</key>
 					<string>10.9</string>
+					<key>OTHER_CODE_SIGN_FLAGS</key>
+					<string>--deep</string>
 					<key>OTHER_CPLUSPLUSFLAGS</key>
 					<array>
 						<string>-D__MACOSX_CORE__</string>
