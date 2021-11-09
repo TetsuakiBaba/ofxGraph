@@ -4,6 +4,8 @@ ofxGraph: a simple plotter for openframeworks
 ## Description
 ofxGraph is a graph plotting addon for openframeworks.
 
+* of: 0.10.1
+
 1. single/multiple plot
 2. Manual adjustable graph size and position
 3. detailed plot data information
