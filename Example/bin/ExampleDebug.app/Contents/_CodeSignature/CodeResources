@@ -11,21 +11,26 @@
 	</dict>
 	<key>files2</key>
 	<dict>
+		<key>Frameworks/libfmod.dylib</key>
+		<dict>
+			<key>cdhash</key>
+			<data>
+			I6bAM7P8H12KCEwlJcM+9eMIWz0=
+			</data>
+			<key>requirement</key>
+			<string>cdhash H"e3276b4137929f92d669c16618ef892678c6347f" or cdhash H"23a6c033b3fc1f5d8a084c2525c33ef5e3085b3d" or cdhash H"f2f96194a8afb6c80b7bbcff6d772c85237f216d" or cdhash H"1ccd24a42ff045f56cca12302b49abc6b549eb40"</string>
+		</dict>
 		<key>Frameworks/libfmodex.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			Ji55KyJEuyrEBz7Ea+cVLArtHrs=
+			e5HkpawKXyMlYUytv8kMLdZIofA=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"9f0707993732af6be59d531f00a97b1a0496a655" or cdhash H"262e792b2244bb2ac4073ec46be7152c0aed1ebb" or cdhash H"42b474ff863109132be7fc8602ade09e9c7abb8e" or cdhash H"2a1d7ed412ed78ded7bc1c3f04491ee91dab25b3"</string>
+			<string>cdhash H"fa4fd6dc16296c96b3465639ca8dd3fe624b580f" or cdhash H"7b91e4a5ac0a5f2325614cadbfc90c2dd648a1f0" or cdhash H"9c8fe804a3ff27e048b2f353c1d4e9ddc70ffcd6" or cdhash H"ce26b07fc2f35a1966c21bb646f9a8946121be52"</string>
 		</dict>
 		<key>Resources/icon-debug.icns</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			PK/FgaLxSEW4pVQhtgMTghsTUq4=
-			</data>
 			<key>hash2</key>
 			<data>
 			3XSbGmlR3OhU9h6wZodURMhm0Su03tPkfZlW6khxq0g=

@@ -40,7 +40,7 @@ public:
     void clear();
     void saveSettings();
     void saveCSV();
-    void basicOperation(ofxPanel _panel);
+    void basicOperation();
     void setBufSize(int _bufsize);
     int  getGrid(int _value, int _gris);
     vector<float> getPlotdataY(int _number);

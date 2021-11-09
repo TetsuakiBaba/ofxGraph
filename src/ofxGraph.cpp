@@ -333,22 +333,22 @@ void ofxGraph::clear()
     plotlabel.clear();
 }
 
-void ofxGraph::basicOperation(ofxPanel _panel)
+void ofxGraph::basicOperation()
 {
         
     ofRectangle r_expand;
-    r_expand.set(r.x+r.width-_panel.getWidth(),
-               r.y+_panel.getHeight(),
-               _panel.getWidth(),
-               r.height-_panel.getHeight());
+    r_expand.set(r.x+r.width-panel.getWidth(),
+               r.y+panel.getHeight(),
+               panel.getWidth(),
+               r.height-panel.getHeight());
     ofRectangle r_gui;
-    r_gui.set(r.x+r.width-_panel.getWidth(),
+    r_gui.set(r.x+r.width-panel.getWidth(),
               r.y,
-              _panel.getWidth(),
-              _panel.getHeight());
+              panel.getWidth(),
+              panel.getHeight());
     ofRectangle r_data;
     r_data.set(r.x, r.y,
-               r.width-_panel.getWidth(),
+               r.width-panel.getWidth(),
                r.height);
     
 
@@ -668,7 +668,7 @@ void ofxGraph::draw()
             drawBar();
             break;
     }
-    basicOperation(panel);
+    basicOperation();
     
     if( r.inside(ofGetMouseX(), ofGetMouseY())){
          panel.draw();
@@ -787,7 +787,7 @@ void ofxGraph2D::draw()
     
     if( r.inside(ofGetMouseX(), ofGetMouseY()) ){
         
-        basicOperation(panel);
+        basicOperation();
         
         string str = "data size: "+ofToString(data.size());
         ofSetColor(c_fill);

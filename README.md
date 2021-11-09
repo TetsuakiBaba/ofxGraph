@@ -12,6 +12,10 @@ ofxGraph is a graph plotting addon for openframeworks.
 6. Automatic saving(position and size). except for ofxGui settings.
 7. New: Added Bar Graph Mode. you can change graph mode to bar or plot.
 
+## Compatible
+* openframeworks: v0.11.2
+* macOS: 12.0.1(Monterey)
+
 ## Usage
  1. Copy ofxGraph/Example/bin/data/ofxGraph directory to  your_OF_project_directory/bin/data
  2. Below is a minimal code to use ofxGraph.
