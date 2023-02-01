@@ -217,6 +217,7 @@ void ofxGraph::add(vector<float> _data, int _label)
     
     
     if( !toggle_pause ){
+        plotMutex.lock();
         if( plotdata.size() < _data.size() ){
             plotdata.clear();
             plotdata.resize(_data.size());
@@ -234,6 +235,7 @@ void ofxGraph::add(vector<float> _data, int _label)
             max.push_back(*max_element(plotdata[i].begin(), plotdata[i].end()));
             min.push_back(*min_element(plotdata[i].begin(), plotdata[i].end()));
         }
+        plotMutex.unlock();
         
         max_data = *max_element(max.begin(), max.end());
         min_data = *min_element(min.begin(), min.end());
@@ -329,7 +331,9 @@ void ofxGraph::add(float _data, int _label)
 
 void ofxGraph::clear()
 {
+    plotMutex.lock();
     plotdata.clear();
+    plotMutex.unlock();
     plotlabel.clear();
 }
 
@@ -463,6 +467,7 @@ void ofxGraph::drawPlot()
                 ofSetColor(color[j%10]);
                 ofSetPolyMode(OF_POLY_WINDING_ODD);
                 ofBeginShape();
+                plotMutex.lock();
                 for( int i = plotdata[j].size()-1; i >= 0; i-- ){
                     if( plotlabel[j][i] == OFXGRAPH_POINT_LABEL_MARKER ){
                         ofSetColor(ofColor::red);
@@ -478,6 +483,7 @@ void ofxGraph::drawPlot()
                     x = x + r.width/(float)plotdata[j].size();
                     
                 }
+                plotMutex.unlock();
 
                 ofEndShape();
             }

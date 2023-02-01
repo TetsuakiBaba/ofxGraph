@@ -67,6 +67,7 @@ public:
     vector<float> data;
     vector<vector<float>> plotdata;
     vector<vector<int>> plotlabel;
+    ofMutex plotMutex;
     
     vector<string>label;
 
