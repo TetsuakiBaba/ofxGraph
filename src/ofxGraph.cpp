@@ -595,7 +595,7 @@ void ofxGraph::drawPlot()
             
         }
        
-
+       
     }
     plotMutex.unlock();
 
@@ -759,6 +759,7 @@ void ofxGraph2D::setup(int _x, int _y, int _w, int _h)
 void ofxGraph2D::add(vector<float>_data)
 {
     if( !toggle_pause ){
+        dataMutex.lock();
         data.push_back(_data);
         
         if( _data.size() > max_size_of_data2d ){
@@ -782,6 +783,7 @@ void ofxGraph2D::add(vector<float>_data)
         while( data.size() > max_length_of_data2d ){
             data.erase(data.begin());
         }
+        dataMutex.unlock();
     }
 }
 
@@ -798,6 +800,7 @@ void ofxGraph2D::draw()
         glPointSize(1.0);
         glBegin(GL_POINTS);
         
+        dataMutex.lock();
         for( int i = 0; i < data.size(); i++ ){
             for( int j = 0; j < data[i].size(); j++ ){
                 glColor4f(color[0].r/255.0, color[0].g/255.0, color[0].b/255.0, data[i][j]/max_data);
@@ -807,6 +810,7 @@ void ofxGraph2D::draw()
             }
             x = x + r.width/(float)data.size();
         }
+        dataMutex.unlock();
         glEnd();
     }
     
@@ -830,10 +834,12 @@ void ofxGraph2D::draw()
 
 void ofxGraph2D::clear()
 {
+    dataMutex.lock();
     for( int i = 0; i < data.size(); i++ ){
         data[i].clear();
     }
     data.clear();
+    dataMutex.unlock();
     max_data = -1000;
     min_data = 1000;
 }
@@ -844,12 +850,14 @@ void ofxGraph2D::saveCSV()
 
    
     csvfile.open(ofToDataPath("ofxGraph/csv/"+name)+ofGetTimestampString()+".csv", ofFile::WriteOnly);
+    dataMutex.lock();
     for( int i = data.size()-1; i >= 0; i-- ){
         for( int j = data[i].size()-1; j >= 0; j-- ){
             csvfile << ofToString(data[i][j]) << ",";
         }
         csvfile << "\n";
     }
+    dataMutex.unlock();
     
 }
 

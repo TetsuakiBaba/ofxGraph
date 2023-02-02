@@ -104,6 +104,7 @@ public:
     ~ofxGraph2D();
 
     vector< vector<float> >data;
+    ofMutex dataMutex;
     void add(vector<float> _data);
     void setup(int _x, int _y, int _w, int _h);
     void draw();
