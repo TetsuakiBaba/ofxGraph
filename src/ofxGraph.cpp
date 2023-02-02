@@ -139,6 +139,7 @@ void ofxGraph::saveCSV()
 
     csvfile.open(result.getPath(), ofFile::WriteOnly);
 
+    plotMutex.lock();
     int j = plotdata[0].size()-1;
     while( j >= 0 ){
         csvfile << ofToString(plotdata[0].size()-1-dx*j) << ",";
@@ -148,6 +149,7 @@ void ofxGraph::saveCSV()
         csvfile << "\n";
         j--;
     }
+    plotMutex.unlock();
 
 }
 
@@ -253,21 +255,28 @@ float ofxGraph::getY(float _x)
 vector<float> ofxGraph::getPlotdataY(int _number)
 {
     vector<float>result;
+    plotMutex.lock();
     if( _number+1 > plotdata.size() ){
+        plotMutex.unlock();
         return result;
     }
 
     for( int i = 0; i < plotdata[_number].size(); i++ ){
         result.push_back(plotdata[_number][i]);
     }
+    plotMutex.unlock();
     return result;
 }
 
 int ofxGraph::getPlotdataSize()
 {
+    plotMutex.lock();
+    int size = 0;
     if( plotdata.size() > 0 ){
-        return plotdata[0].size();
+        size = plotdata[0].size();
     }
+    plotMutex.unlock();
+    return size;
 }
 
 vector<float> ofxGraph::getPlotdataY()
@@ -278,7 +287,9 @@ vector<float> ofxGraph::getPlotdataY()
 //! get Y value of plotdata[_number]
 float ofxGraph::getY(float _x, int _number)
 {
+    plotMutex.lock();
     if( plotdata.size() < _number ){
+        plotMutex.unlock();
         return -1;
     }
     vector<float>v;
@@ -286,6 +297,7 @@ float ofxGraph::getY(float _x, int _number)
         v.push_back(plotdata[0][i]);
     }
     
+    plotMutex.unlock();
     int index = _x/dx;
     return v[index];
     
@@ -297,6 +309,7 @@ ofPoint ofxGraph::getMaxPoint(float _x_left, float x_right)
     int max = -10000;
     int pos;
     vector<float>v;
+    plotMutex.lock();
     for( int j = 0; j < plotdata.size(); j++ ){
 
         for( int i = plotdata[j].size()-1; i >= 0; i--){
@@ -311,6 +324,7 @@ ofPoint ofxGraph::getMaxPoint(float _x_left, float x_right)
             }
         }
     }
+    plotMutex.unlock();
     p_result.set(pos*dx, max);
     return p_result;
 }
@@ -447,6 +461,8 @@ void ofxGraph::drawPlot()
     float x = 0;
     float rate = 0.0;
     
+    plotMutex.lock();
+
     for( int j = 0; j < plotdata.size(); j++ ){
         if( plotdata[j].size() > 0 ){
             
@@ -467,7 +483,6 @@ void ofxGraph::drawPlot()
                 ofSetColor(color[j%10]);
                 ofSetPolyMode(OF_POLY_WINDING_ODD);
                 ofBeginShape();
-                plotMutex.lock();
                 for( int i = plotdata[j].size()-1; i >= 0; i-- ){
                     if( plotlabel[j][i] == OFXGRAPH_POINT_LABEL_MARKER ){
                         ofSetColor(ofColor::red);
@@ -483,8 +498,7 @@ void ofxGraph::drawPlot()
                     x = x + r.width/(float)plotdata[j].size();
                     
                 }
-                plotMutex.unlock();
-
+                
                 ofEndShape();
             }
             
@@ -492,12 +506,12 @@ void ofxGraph::drawPlot()
         x = 0.0;
     }
     ofSetColor(color[0]);
-    
+
     
     // Show detail information
     if( r.inside(ofGetMouseX(), ofGetMouseY()) ){
         
-        
+
         if( plotdata.size() > 0 && toggle_no_draw == false ){
 
             for( int j = 0; j < plotdata.size(); j++ ){
@@ -519,7 +533,7 @@ void ofxGraph::drawPlot()
                     }
                     x = x + r.width/(float)plotdata[j].size();
                 }
-                
+
                 string str;
                 
                 // show nearest plot information
@@ -581,13 +595,17 @@ void ofxGraph::drawPlot()
             
         }
        
-        
+
     }
+    plotMutex.unlock();
+
 }
+
 void ofxGraph::drawBar()
 {
     float x = 0;
     float rate = 0.0;
+    plotMutex.lock();
     float width_bar = r.width / float(plotdata.size()+2);
     
     for( int j = 0; j < plotdata.size(); j++ ){
@@ -648,6 +666,7 @@ void ofxGraph::drawBar()
         }
         x = 0.0;
     }
+    plotMutex.unlock();
     ofSetColor(color[0]);
 }
 void ofxGraph::draw()
